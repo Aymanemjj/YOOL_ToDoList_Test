@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->enum('status', ['todo', 'in_progress', 'done'])->default('todo');
+            $table->date('due_date');
         });
     }
 
