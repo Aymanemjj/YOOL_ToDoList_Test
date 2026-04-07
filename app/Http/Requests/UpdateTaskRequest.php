@@ -2,28 +2,37 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'title'       => ['required', 'string', 'min:3', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'status' => ['required', 'in:todo,in_progress,done'],
+            'due_date'    => ['nullable', 'date', 'date_format:Y-m-d'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.required'       => 'A task title is required.',
+            'title.min'            => 'The title must be at least 3 characters.',
+            'title.max'            => 'The title may not exceed 255 characters.',
+            'status.required'      => 'Please select a status.',
+            'status.in'            => 'The selected status is invalid.',
+            'due_date.date'        => 'Please provide a valid date.',
+            'due_date.date_format' => 'The due date must be in YYYY-MM-DD format.',
         ];
     }
 }
