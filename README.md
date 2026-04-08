@@ -13,10 +13,10 @@ A simple task management application built with Laravel and Tailwind CSS.
 
 ## Tech Stack
 
-- Laravel 11
+- Laravel 13
 - MySQL / MariaDB
 - Tailwind CSS
-- Alpine.js
+
 
 ## Installation
 
