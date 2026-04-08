@@ -3,14 +3,18 @@
 namespace App\Services;
 
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 use function PHPUnit\Framework\isEmpty;
 
 class TaskService
 {
-    public function list($filters = [])
+    public function list($request)
     {
-        $query = Task::query();
+
+        $filters = $request->only(['status', 'search']);
+
+        $query = Task::query()->where('user_id', Auth::id());
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -20,11 +24,12 @@ class TaskService
             $query->where('title', 'like', "%{$filters['search']}%");
         }
 
-        return $query->paginate(10)->withQueryString();
+        return $query->paginate(3)->withQueryString();
     }
 
     public function create(array $data)
     {
+        $data['user_id'] = Auth::id();
         return Task::create($data);
     }
 
@@ -39,8 +44,8 @@ class TaskService
         $task->delete();
     }
 
-    public function markAsDone(Task $task)
+    public function status(Task $task)
     {
-        $task->update(['status' => 'done']);
+        $task->status === 'done' ? $task->update(['status' => 'todo']) : $task->update(['status' => 'done']);
     }
 }
