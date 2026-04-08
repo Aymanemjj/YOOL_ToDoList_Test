@@ -7,11 +7,11 @@
         </div>
     @endif
 
-    <div class="flex items-center gap-4 mb-6">
+    <div class="flex sm:flex-row flex-col items-center gap-4 mb-6">
         <a href="{{ route('tasks.create') }}"
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">New Task</a>
+            class="text-center w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">New Task</a>
 
-        <form action="{{ route('tasks.index') }}" method="GET" class="flex gap-2">
+        <form action="{{ route('tasks.index') }}" method="GET" class="w-full flex sm:flex-row flex-col gap-2">
 
 
             <input type="text" name="search" class="border border-gray-300 rounded bg-white px-3 py-2 text-sm"
@@ -27,39 +27,38 @@
                 class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Filter</button>
         </form>
     </div>
+    <div @foreach ($tasks as $task)
+            <div
+                class="border border-gray-200 rounded p-4 mb-3 {{ $task->status === 'done' ? 'bg-green-100' : 'bg-white' }}">
+                <small class="font-semibold text-gray-800">{{ $task->due_date }}</small>
+                <h3 class="font-semibold text-gray-800">{{ $task->title }}</h3>
+                <p class="text-sm text-gray-500 mt-1">{{ $task->description }}</p>
+                <p class="text-sm mt-1">Status: {{ $task->status }}</p>
 
-    @foreach ($tasks as $task)
-        <div
-            class="border border-gray-200 rounded p-4 mb-3 {{ $task->status === 'done' ? 'bg-green-100' : 'bg-white' }}">
-            <small class="font-semibold text-gray-800">{{ $task->due_date }}</small>
-            <h3 class="font-semibold text-gray-800">{{ $task->title }}</h3>
-            <p class="text-sm text-gray-500 mt-1">{{ $task->description }}</p>
-            <p class="text-sm mt-1">Status: {{ $task->status }}</p>
+                <div class="mt-3 flex sm:flex-row flex-col gap-2">
+                    <a href="{{ route('tasks.edit', $task) }}"
+                        class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 text-center">Edit</a>
 
-            <div class="mt-3 flex gap-2">
-                <a href="{{ route('tasks.edit', $task) }}"
-                    class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Edit</a>
+                    <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 cursor-pointer w-full">Delete</button>
+                    </form>
 
-                <form action="{{ route('tasks.destroy', $task) }}" method="POST" >
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                        class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 cursor-pointer">Delete</button>
-                </form>
+                    <form action="{{ route('tasks.status', $task) }}" method="POST">
+                        @csrf
+                        @method('patch')
+                        <button type="submit"
+                            class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700 cursor-pointer w-full">{{ $task->status === 'done' ? 'Mark as To Do' : 'Mark as Done' }}</button>
+                    </form>
 
-                <form action="{{ route('tasks.status', $task) }}" method="POST" >
-                    @csrf
-                    @method('patch')
-                    <button type="submit"
-                        class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700 cursor-pointer">{{$task->status === 'done' ? 'Mark as To Do' : 'Mark as Done' }}</button>
-                </form>
-
-            </div>
-        </div>
-    @endforeach
-
-    <div class="mt-6">
+                </div>
+            </div> @endforeach
+        <div class="mt-6">
         {{ $tasks->links() }}
     </div>
+    </div>
+
 
 </x-main>
